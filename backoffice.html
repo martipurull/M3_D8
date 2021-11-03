@@ -11,6 +11,12 @@
         integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
     <link rel="stylesheet" href="styles.css">
     <title>MP Strivazon Backoffice</title>
+    <style>
+        body {
+            background: rgb(54, 54, 54);
+            color: rgb(228, 228, 228);
+        }
+    </style>
 </head>
 
 <body>
@@ -27,11 +33,33 @@
             </div>
         </div>
     </nav>
-    <div class="container mt-5">
+    <div id="mainContainer" class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-6">
                 <h1>Add a product</h1>
-
+                <form onsubmit="addProduct(event)">
+                    <div class="form-group">
+                        <label for="name">Product Name</label>
+                        <input type="text" class="form-control" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="brand">Brand</label>
+                        <input type="text" class="form-control" id="brand">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price</label>
+                        <input type="number" class="form-control" id="price">
+                    </div>
+                    <div class="form-group">
+                        <label for="imageUrl">Image URL</label>
+                        <input type="text" class="form-control" id="imageUrl">
+                    </div>
+                    <button class="btn btn-success">Add Product</button>
+                </form>
             </div>
         </div>
     </div>
@@ -51,7 +79,48 @@
         integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
         crossorigin="anonymous"></script>
     <script>
-
+        const addProduct = async (event) => {
+            event.preventDefault()
+            const newProduct = {
+                name: document.getElementById('name').value,
+                description: document.getElementById('description').value,
+                brand: document.getElementById('brand').value,
+                price: document.getElementById('price').value,
+                imageUrl: document.getElementById('imageUrl').value
+            }
+            try {
+                const response = await fetch("https://striveschool-api.herokuapp.com/api/product/", {
+                    method: "POST",
+                    body: JSON.stringify(newProduct),
+                    headers: {
+                        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyOGY4NmFhY2FhMjAwMTU1MmExODAiLCJpYXQiOjE2MzU5NDYzNzQsImV4cCI6MTYzNzE1NTk3NH0.6imtX9f9iWxIVzzBvcrBsauI1w-Q-CwrEhE3jWo_i88",
+                        "Content-Type": "application/json",
+                    },
+                })
+                if (response.ok) {
+                    console.log(response)
+                    const confirmationResponse = await response.json()
+                    const mainContainer = document.getElementById('mainContainer')
+                    const confirmationAlert = document.createElement('div')
+                    confirmationAlert.innerHTML = `
+                    <div class="alert alert-success" role="alert">
+                        ${ newProduct.name } added successfully!
+                    </div>
+                    `
+                    mainContainer.prepend(confirmationAlert)
+                }
+            } catch (error) {
+                console.log(error)
+                const errorAlert = document.createElement('div')
+                errorAlert.innerHTML = `
+                <div class="alert alert-danger" role="alert">
+                    Something went wrong. Namely, this: ${ error }
+                </div>
+                `
+                const mainContainer = document.getElementById('mainContainer')
+                mainContainer.prepend(errorAlert)
+            }
+        }
 
     </script>
 </body>

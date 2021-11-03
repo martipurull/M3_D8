@@ -11,3 +11,22 @@ h1 {
 .text-success {
     color: #02ff84!important;
 }
+
+.btn-success {
+    background-color: #02ff84;
+    border: none;
+}
+
+.btn-success:hover {
+    background-color: #02ff8585;
+}
+
+.card {
+    height: 100%;
+}
+
+.card img {
+    height: 300px;
+    object-fit: cover;
+}
+
