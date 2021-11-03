@@ -14,10 +14,23 @@
 </head>
 
 <body>
-    <div class="jumbotron jumbotron-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand text-success rounded" href="#">SZ</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+            aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/backoffice.html">Backoffice</a>
+            </div>
+        </div>
+    </nav>
+    <div class="jumbotron jumbotron-fluid bg-dark">
         <div class="container">
             <h1 class="display-4">Strivazon</h1>
-            <p class="lead">We didn't invent ecommerce, but we'll sure profit from it.</p>
+            <p class="lead text-white">We didn't invent ecommerce, but we'll sure profit from it.</p>
         </div>
     </div>
     <div class="container">
@@ -41,13 +54,19 @@
     <script>
 
         const loadProducts = async () => {
-            const response = await fetch('https://striveschool-api.herokuapp.com/api/product/')
+            const response = await fetch("https://striveschool-api.herokuapp.com/api/product/", {
+                headers: {
+                    "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyOGY4NmFhY2FhMjAwMTU1MmExODAiLCJpYXQiOjE2MzU5NDYzNzQsImV4cCI6MTYzNzE1NTk3NH0.6imtX9f9iWxIVzzBvcrBsauI1w-Q-CwrEhE3jWo_i88",
+                },
+            })
             const body = await response.json()
+            console.log(body)
             return body
         }
 
         const displayProducts = (products) => {
             products.forEach(product => {
+                const mainRow = document.getElementById('mainRowOfProducts')
                 const productCol = document.createElement('div')
                 productCol.classList.add("col-6", "col-sm-4", "col-md-3", "col-lg-2")
                 productCol.innerHTML = `
@@ -56,11 +75,12 @@
                     <div class="card-body">
                         <h5 class="card-title">${ product.name }</h5>
                         <p class="card-text">${ product.description }</p>
-                        <h6>Example heading <span class="badge badge-success">only £${ product.price }</span></h6>
-                        <a href="#" class="btn btn-primary">product details</a>
+                        <h6>Only<span class="badge badge-success ml-2">£${ product.price }</span></h6>
+                        <a href="#" class="btn btn-sm btn-primary mt-3">product details</a>
                     </div>
                 </div>
                 `
+                mainRow.appendChild(productCol)
             })
         }
 
