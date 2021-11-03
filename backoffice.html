@@ -13,8 +13,10 @@
     <title>MP Strivazon Backoffice</title>
     <style>
         body {
-            background: rgb(54, 54, 54);
-            color: rgb(228, 228, 228);
+            height: 100vh;
+            background: rgb(107, 107, 107);
+            background: linear-gradient(300deg, rgba(107, 107, 107, 1) 0%, rgba(74, 74, 74, 1) 34%, rgba(47, 47, 47, 1) 60%, rgba(54, 54, 54, 1) 80%);
+            color: #e4e4e4;
         }
     </style>
 </head>
@@ -107,7 +109,7 @@
                         ${ newProduct.name } added successfully!
                     </div>
                     `
-                    clearForm()
+                    const form = document.querySelector('form').reset()
                     mainContainer.prepend(confirmationAlert)
                 }
             } catch (error) {
@@ -118,43 +120,9 @@
                     Something went wrong. Namely, this: ${ error }
                 </div>
                 `
-                const mainContainer = document.getElementById('mainContainer')
+                document.getElementById('mainContainer')
                 mainContainer.prepend(errorAlert)
             }
-        }
-
-        const clearForm = () => {
-            const mainContainer = document.getElementById('mainContainer')
-            mainContainer.innerHTML = `
-            <div class="row justify-content-center">
-            <div class="col-6">
-                <h1>Add a product</h1>
-                <form onsubmit="addProduct(event)">
-                    <div class="form-group">
-                        <label for="name">Product Name</label>
-                        <input type="text" class="form-control" id="name">
-                    </div>
-                    <div class="form-group">
-                        <label for="description">Description</label>
-                        <textarea class="form-control" id="description" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="brand">Brand</label>
-                        <input type="text" class="form-control" id="brand">
-                    </div>
-                    <div class="form-group">
-                        <label for="price">Price</label>
-                        <input type="number" class="form-control" id="price">
-                    </div>
-                    <div class="form-group">
-                        <label for="imageUrl">Image URL</label>
-                        <input type="text" class="form-control" id="imageUrl">
-                    </div>
-                    <button class="btn btn-success">Add Product</button>
-                </form>
-            </div>
-        </div>
-            `
         }
 
     </script>
