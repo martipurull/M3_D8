@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css"
+        integrity="sha384-zCbKRCUGaJDkqS1kPbPd7TveP5iyJE0EjAuZQTgFLD2ylzuqKfdKlfG/eSrtxUkn" crossorigin="anonymous">
+    <link rel="stylesheet" href="styles.css">
+    <title>MP Strivazon</title>
+</head>
+
+<body>
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+            <h1 class="display-4">Strivazon</h1>
+            <p class="lead">We didn't invent ecommerce, but we'll sure profit from it.</p>
+        </div>
+    </div>
+    <div class="container">
+        <div id="mainRowOfProducts" class="row"></div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
+        crossorigin="anonymous"></script>
+    <script>
+
+        const loadProducts = async () => {
+            const response = await fetch('https://striveschool-api.herokuapp.com/api/product/')
+            const body = await response.json()
+            return body
+        }
+
+        const displayProducts = (products) => {
+            products.forEach(product => {
+                const productCol = document.createElement('div')
+                productCol.classList.add("col-6", "col-sm-4", "col-md-3", "col-lg-2")
+                productCol.innerHTML = `
+                <div class="card">
+                    <img src="${ product.imageUrl }" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <h5 class="card-title">${ product.name }</h5>
+                        <p class="card-text">${ product.description }</p>
+                        <h6>Example heading <span class="badge badge-success">only £${ product.price }</span></h6>
+                        <a href="#" class="btn btn-primary">product details</a>
+                    </div>
+                </div>
+                `
+            })
+        }
+
+
+        window.onload = async () => {
+            let loadedProducts = await loadProducts()
+            displayProducts(loadedProducts)
+        }
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
