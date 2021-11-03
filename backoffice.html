@@ -107,6 +107,7 @@
                         ${ newProduct.name } added successfully!
                     </div>
                     `
+                    clearForm()
                     mainContainer.prepend(confirmationAlert)
                 }
             } catch (error) {
@@ -120,6 +121,40 @@
                 const mainContainer = document.getElementById('mainContainer')
                 mainContainer.prepend(errorAlert)
             }
+        }
+
+        const clearForm = () => {
+            const mainContainer = document.getElementById('mainContainer')
+            mainContainer.innerHTML = `
+            <div class="row justify-content-center">
+            <div class="col-6">
+                <h1>Add a product</h1>
+                <form onsubmit="addProduct(event)">
+                    <div class="form-group">
+                        <label for="name">Product Name</label>
+                        <input type="text" class="form-control" id="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea class="form-control" id="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="brand">Brand</label>
+                        <input type="text" class="form-control" id="brand">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Price</label>
+                        <input type="number" class="form-control" id="price">
+                    </div>
+                    <div class="form-group">
+                        <label for="imageUrl">Image URL</label>
+                        <input type="text" class="form-control" id="imageUrl">
+                    </div>
+                    <button class="btn btn-success">Add Product</button>
+                </form>
+            </div>
+        </div>
+            `
         }
 
     </script>
