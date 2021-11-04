@@ -167,6 +167,8 @@
             } catch (error) {
                 console.log(error)
                 showAlert('danger', `Something went wrong, namely this: ${ error }`)
+            } finally {
+                showSpinner(false)
             }
         }
 
@@ -201,9 +203,6 @@
                 } catch (error) {
                     console.log(error)
                     showAlert('danger', `Something went wrong, namely this: ${ error.message }`)
-                }
-                finally {
-                    showSpinner(false)
                 }
             }
         }
