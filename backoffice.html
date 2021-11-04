@@ -18,6 +18,11 @@
             background: linear-gradient(300deg, rgba(107, 107, 107, 1) 0%, rgba(74, 74, 74, 1) 34%, rgba(47, 47, 47, 1) 60%, rgba(54, 54, 54, 1) 80%);
             color: #e4e4e4;
         }
+
+        .validated input:invalid,
+        .validated textarea:invalid {
+            border: 2px solid red;
+        }
     </style>
 </head>
 
@@ -31,36 +36,47 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <div class="navbar-nav">
                 <a class="nav-link" href="/frontpage.html">Home <span class="sr-only">(current)</span></a>
-                <a class="nav-link active" href="#">Backoffice</a>
+                <a class="nav-link" href="#">Backoffice</a>
             </div>
         </div>
     </nav>
     <div id="mainContainer" class="container mt-5">
         <div class="row justify-content-center">
             <div class="col-6">
-                <h1>Add a product</h1>
-                <form onsubmit="addProduct(event)">
+                <h1></h1>
+                <form onsubmit="submitProduct(event)">
                     <div class="form-group">
                         <label for="name">Product Name</label>
-                        <input type="text" class="form-control" id="name">
+                        <input type="text" class="form-control" id="name" required>
                     </div>
                     <div class="form-group">
                         <label for="description">Description</label>
-                        <textarea class="form-control" id="description" rows="3"></textarea>
+                        <textarea class="form-control" id="description" rows="3" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="brand">Brand</label>
-                        <input type="text" class="form-control" id="brand">
+                        <input type="text" class="form-control" id="brand" required>
                     </div>
                     <div class="form-group">
                         <label for="price">Price</label>
-                        <input type="number" class="form-control" id="price">
+                        <input type="number" class="form-control" id="price" required>
                     </div>
                     <div class="form-group">
                         <label for="imageUrl">Image URL</label>
-                        <input type="text" class="form-control" id="imageUrl">
+                        <input type="text" class="form-control" id="imageUrl" required>
                     </div>
-                    <button class="btn btn-success">Add Product</button>
+                    <div class="d-flex">
+                        <button id="resetBtn" type="reset" class="btn btn-warning">Reset</button>
+                        <button id="submitBtn" class="btn btn-success ml-2" onclick="validateForm(event)"></button>
+                        <button id="deleteBtn" type="button" class="btn btn-sm btn-danger ml-auto d-none"
+                            onclick="deleteProduct()"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                                <path
+                                    d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z" />
+                                <path fill-rule="evenodd"
+                                    d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z" />
+                            </svg></button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -81,8 +97,45 @@
         integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF"
         crossorigin="anonymous"></script>
     <script>
-        const addProduct = async (event) => {
+        const productId = new URLSearchParams(window.location.search).get("productId")
+        const endpoint = productId ? 'https://striveschool-api.herokuapp.com/api/product/' + productId : 'https://striveschool-api.herokuapp.com/api/product/'
+
+        window.onload = async () => {
+            const submitBtn = document.getElementById('submitBtn')
+
+            if (productId) {
+                const response = await fetch(endpoint, {
+                    headers: {
+                        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyOGY4NmFhY2FhMjAwMTU1MmExODAiLCJpYXQiOjE2MzU5NDYzNzQsImV4cCI6MTYzNzE1NTk3NH0.6imtX9f9iWxIVzzBvcrBsauI1w-Q-CwrEhE3jWo_i88",
+                    },
+                })
+                const productDetails = await response.json()
+
+                const { name, description, brand, price, imageUrl } = productDetails
+
+                document.getElementById('name').value = name
+                document.getElementById('description').value = description
+                document.getElementById('brand').value = brand
+                document.getElementById('price').value = price
+                document.getElementById('imageUrl').value = imageUrl
+                document.querySelector('h1').innerText = `Edit – ${ name }`
+                submitBtn.innerText = 'Edit Product'
+                document.getElementById('deleteBtn').classList.remove('d-none')
+            } else {
+                submitBtn.innerText = 'Add New Product'
+                document.querySelector('h1').innerText = 'Add A New Product'
+            }
+        }
+
+        const validateForm = (event) => {
+            event.target.form.classList.add('validated')
+        }
+
+        const method = productId ? "PUT" : "POST"
+
+        const submitProduct = async (event) => {
             event.preventDefault()
+            showSpinner(true)
             const newProduct = {
                 name: document.getElementById('name').value,
                 description: document.getElementById('description').value,
@@ -91,8 +144,8 @@
                 imageUrl: document.getElementById('imageUrl').value
             }
             try {
-                const response = await fetch("https://striveschool-api.herokuapp.com/api/product/", {
-                    method: "POST",
+                const response = await fetch(endpoint, {
+                    method: method,
                     body: JSON.stringify(newProduct),
                     headers: {
                         "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyOGY4NmFhY2FhMjAwMTU1MmExODAiLCJpYXQiOjE2MzU5NDYzNzQsImV4cCI6MTYzNzE1NTk3NH0.6imtX9f9iWxIVzzBvcrBsauI1w-Q-CwrEhE3jWo_i88",
@@ -102,26 +155,67 @@
                 if (response.ok) {
                     console.log(response)
                     const confirmationResponse = await response.json()
-                    const mainContainer = document.getElementById('mainContainer')
-                    const confirmationAlert = document.createElement('div')
-                    confirmationAlert.innerHTML = `
-                    <div class="alert alert-success" role="alert">
-                        ${ newProduct.name } added successfully!
-                    </div>
-                    `
-                    const form = document.querySelector('form').reset()
-                    mainContainer.prepend(confirmationAlert)
+                    if (productId) {
+                        showAlert('primary', `${ newProduct.name } edited successfully!`)
+                        setTimeout(() => {
+                            window.location.assign('frontpage.html')
+                        }, 1500)
+                    } else {
+                        showAlert('success', `${ newProduct.name } created successfully!`)
+                    }
                 }
             } catch (error) {
                 console.log(error)
-                const errorAlert = document.createElement('div')
-                errorAlert.innerHTML = `
-                <div class="alert alert-danger" role="alert">
-                    Something went wrong. Namely, this: ${ error }
-                </div>
-                `
-                document.getElementById('mainContainer')
-                mainContainer.prepend(errorAlert)
+                showAlert('danger', `Something went wrong, namely this: ${ error }`)
+            }
+        }
+
+        const showAlert = (type, message) => {
+            const mainContainer = document.getElementById('mainContainer')
+            const alertSpan = document.createElement('span')
+            alertSpan.innerHTML = `<div class="alert alert-${ type }" role="alert"> ${ message }</div>`
+            mainContainer.prepend(alertSpan)
+            setTimeout(() => {
+                alertSpan.innerHTML = ''
+            }, 2000)
+        }
+
+        const deleteProduct = async () => {
+            const accepted = confirm("Are you sure you want to permanently DELETE this product?")
+            if (accepted) {
+                try {
+                    const response = await fetch(endpoint, {
+                        method: "DELETE",
+                        headers: {
+                            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTgyOGY4NmFhY2FhMjAwMTU1MmExODAiLCJpYXQiOjE2MzU5NDYzNzQsImV4cCI6MTYzNzE1NTk3NH0.6imtX9f9iWxIVzzBvcrBsauI1w-Q-CwrEhE3jWo_i88",
+                            "Content-Type": "application/json",
+                        },
+                    })
+                    if (response.ok) {
+                        const deletedProduct = await response.json()
+                        showAlert('warning', `${ deletedProduct.name } permanently deleted.`)
+                        setTimeout(() => {
+                            window.location.assign('frontpage.html')
+                        }, 1500)
+                    }
+                } catch (error) {
+                    console.log(error)
+                    showAlert('danger', `Something went wrong, namely this: ${ error.message }`)
+                }
+                finally {
+                    showSpinner(false)
+                }
+            }
+        }
+
+        const showSpinner = (isLoading) => {
+            const submitBtn = document.getElementById('submitBtn')
+
+            const spinner = `<span class="spinner-border spinner-border-sm ml-2" role="status"></span>`
+            if (isLoading) {
+                submitBtn.innerHTML += spinner
+            } else {
+                spinner.remove()
             }
         }
 
